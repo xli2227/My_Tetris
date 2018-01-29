@@ -16,9 +16,8 @@ public class TFrame extends JFrame {
 	
 	//Frame Constructor
 	public TFrame() {
-        setSize(480, 880);
+        setSize(640, 840);
         setTitle("Tetris");
- 
         addWindowListener(new WindowAdapter() {
       	  public void windowClosing(WindowEvent e) {
       	    int confirmed = JOptionPane.showConfirmDialog(null, 
@@ -30,9 +29,9 @@ public class TFrame extends JFrame {
       	  }
       	});
         
-        statusbar = new JLabel(" 0");
+        statusbar = new JLabel("Score: 0");
         statusbar.setFont(new Font (Font.DIALOG, Font.BOLD, 28));
-        add(statusbar, BorderLayout.SOUTH);
+        add(statusbar,BorderLayout.SOUTH);
 
         
         

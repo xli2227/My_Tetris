@@ -17,23 +17,28 @@ import UI.Shape.*;
 public class Panel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	static final int BoardWidth = 12;
-	static final int BoardHeight = 22;
+	static final int BoardWidth = 16;
+	static final int BoardHeight = 21;
 
 	Timer timer;
+	int[] timeset={400, 350, 300, 200, 100, 50, 30, 20};
 	boolean isFallingFinished = false;
 	boolean isStarted = false;
 	boolean isPaused = false;
-	int numLinesRemoved = 0;
+	int score = 0;
+	int level = 0;
 	int curX = 0;
 	int curY = 0;
 	Shape curPiece;
+	Shape nextPiece;
 	Tetrominoes[] panel;
 	JLabel statusbar;
 
 	public Panel(TFrame p) {
 		setFocusable(true);
 		curPiece = new Shape();
+		nextPiece = new Shape();
+		nextPiece.setRandomShape();
 		timer = new Timer(400, this);
 		timer.start();
 
@@ -43,15 +48,6 @@ public class Panel extends JPanel implements ActionListener {
 		SetEmptyBoard();
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (isFallingFinished) {
-			isFallingFinished = false;
-			newPiece();
-		} else {
-			oneLineDown();
-		}
-	}
-
 	// Game Start
 	public void start() {
 		if (isPaused)
@@ -59,7 +55,7 @@ public class Panel extends JPanel implements ActionListener {
 
 		isStarted = true;
 		isFallingFinished = false;
-		numLinesRemoved = 0;
+		score = 0;
 		SetEmptyBoard();
 
 		newPiece();
@@ -76,17 +72,29 @@ public class Panel extends JPanel implements ActionListener {
 			statusbar.setText("paused");
 		} else {
 			timer.start();
-			statusbar.setText("Score" + String.valueOf(numLinesRemoved));
+			statusbar.setText("Score" + String.valueOf(score));
 		}
 		repaint();
 	}
+	
+	public void actionPerformed(ActionEvent e) {
+		if (isFallingFinished) {
+			isFallingFinished = false;
+			newPiece();
+		} else {
+			oneLineDown();
+		}
+	}
+
 
 	// creating a new piece in the middle.
 	private void newPiece() {
-		curPiece.setRandomShape();
-		curX = BoardWidth / 2 + 1;
+		curPiece=nextPiece;
+		Shape temp = new Shape();
+		temp.setRandomShape();
+		nextPiece = temp;
+		curX = (BoardWidth - 4) / 2 + 1;
 		curY = BoardHeight - 1 + curPiece.minY();
-
 		if (!tryMove(curPiece, curX, curY)) {
 			curPiece.setShape(Tetrominoes.NoShape);
 			timer.stop();
@@ -120,7 +128,7 @@ public class Panel extends JPanel implements ActionListener {
 		for (int i = 0; i < 4; ++i) {
 			int x = newX + newPiece.getX(i);
 			int y = newY - newPiece.getY(i);
-			if (x < 1 || x >= BoardWidth - 1 || y < 1 || y >= BoardHeight)
+			if (x < 1 || x >= BoardWidth - 5 || y < 1 || y >= BoardHeight)
 				return false;
 			if (shapeAt(x, y) != Tetrominoes.NoShape)
 				return false;
@@ -139,7 +147,7 @@ public class Panel extends JPanel implements ActionListener {
 		for (int i = BoardHeight - 2; i >= 0; i--) {
 			boolean lineIsFull = true;
 
-			for (int j = 1; j < BoardWidth - 1; j++) {
+			for (int j = 1; j < BoardWidth - 5; j++) {
 				if (shapeAt(j, i) == Tetrominoes.NoShape) {
 					lineIsFull = false;
 					break;
@@ -156,8 +164,24 @@ public class Panel extends JPanel implements ActionListener {
 		}
 
 		if (numFullLines > 0) {
-			numLinesRemoved += numFullLines;
-			statusbar.setText(String.valueOf(numLinesRemoved));
+			int temps=0;
+			if(numFullLines == 1)
+				temps = 1;
+			else if(numFullLines == 2)
+				temps = 3;
+			else if(numFullLines == 3)
+				temps = 5;
+			else if(numFullLines == 4)
+				temps = 10;
+			score += temps;
+			//Now we have current Score, try to set the level.
+			level = score / 50;
+			if(level > 7)
+				level = 7;
+			timer.setDelay(timeset[level]);
+			timer.start();
+			
+			statusbar.setText("Score: " + String.valueOf(score));
 			isFallingFinished = true;
 			curPiece.setShape(Tetrominoes.NoShape);
 			repaint();
@@ -201,15 +225,29 @@ public class Panel extends JPanel implements ActionListener {
 		for (int i = 0; i < BoardHeight; ++i) {
 			for (int j = 0; j < BoardWidth; ++j) {
 				Tetrominoes shape = shapeAt(j, BoardHeight - i - 1);
-				if (i == BoardHeight - 1 || j == 0 || j == BoardWidth - 1)
+				if ((i == BoardHeight - 1 && j <= BoardWidth - 5 )|| j == 0 || j == BoardWidth - 5)
 					shape=Tetrominoes.Wall;
-					if (shape != Tetrominoes.NoShape)
+				if (shape != Tetrominoes.NoShape)
 						drawSquare(g, 0 + j * squareWidth(), boardTop + i * squareHeight(), shape);
 			}
 		}
+		
+		if(nextPiece.getShape() != Tetrominoes.NoShape)
+		{
+			int nextX = BoardWidth - 2;
+			int nextY = BoardHeight - 5 + nextPiece.minY();
+			for(int i = 0; i < 4; i++)
+			{
+				int x = nextX + nextPiece.getX(i);
+				int y = nextY - nextPiece.getY(i);	
+				drawSquare(g, 0 + x * squareWidth(), boardTop + (BoardHeight - y - 1) * squareHeight(),
+						nextPiece.getShape());
+			}
+			
+		}
 
 		if (curPiece.getShape() != Tetrominoes.NoShape) {
-			for (int i = 0; i < 4; ++i) {
+			for (int i = 0; i < 4; i++) {
 				int x = curX + curPiece.getX(i);
 				int y = curY - curPiece.getY(i);
 				drawSquare(g, 0 + x * squareWidth(), boardTop + (BoardHeight - y - 1) * squareHeight(),
