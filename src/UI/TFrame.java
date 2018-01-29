@@ -16,7 +16,7 @@ public class TFrame extends JFrame {
 	
 	//Frame Constructor
 	public TFrame() {
-        setSize(424, 848);
+        setSize(480, 880);
         setTitle("Tetris");
  
         addWindowListener(new WindowAdapter() {
@@ -30,11 +30,8 @@ public class TFrame extends JFrame {
       	  }
       	});
         
-		score =new JLabel("Score:");
-		score.setFont(new Font (Font.DIALOG, Font.BOLD, 28));
         statusbar = new JLabel(" 0");
         statusbar.setFont(new Font (Font.DIALOG, Font.BOLD, 28));
-        add(score, BorderLayout.SOUTH);
         add(statusbar, BorderLayout.SOUTH);
 
         

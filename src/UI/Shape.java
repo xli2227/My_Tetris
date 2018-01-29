@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Shape {
 	enum Tetrominoes { NoShape, ZShape, SShape, LineShape, 
-	               TShape, SquareShape, LShape, MirroredLShape };
+	               TShape, SquareShape, LShape, MirroredLShape, Wall };
 	private Tetrominoes shape;
 	private int coords[][];
     private int[][][] coordsTable;
@@ -16,7 +16,7 @@ public class Shape {
     }
     
     public void setShape(Tetrominoes s) {
-    	//Defines the Pixal of 7 shape of pieces + 1 NoShape.
+    	//Defines the Pixal of 7 shape of pieces + 1 NoShape + 1 Wall.
         coordsTable = new int[][][] {
            { { 0, 0 },   { 0, 0 },   { 0, 0 },   { 0, 0 } },
            { { 0, -1 },  { 0, 0 },   { -1, 0 },  { -1, 1 } },
@@ -25,7 +25,8 @@ public class Shape {
            { { -1, 0 },  { 0, 0 },   { 1, 0 },   { 0, 1 } },
            { { 0, 0 },   { 1, 0 },   { 0, 1 },   { 1, 1 } },
            { { -1, -1 }, { 0, -1 },  { 0, 0 },   { 0, 1 } },
-           { { 1, -1 },  { 0, -1 },  { 0, 0 },   { 0, 1 } }
+           { { 1, -1 },  { 0, -1 },  { 0, 0 },   { 0, 1 } },
+           { { 0, 0 },   { 0, 0 },   { 0, 0 },   { 0, 0 } }
        };
 
        for (int i = 0; i < 4 ; i++) {
