@@ -8,7 +8,8 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 
 import UI.Panel;;
 
@@ -32,21 +33,27 @@ public class TFrame extends JFrame {
         statusbar = new JLabel("Score: 0");
         statusbar.setFont(new Font (Font.DIALOG, Font.BOLD, 28));
         add(statusbar,BorderLayout.SOUTH);
-
         
         
-        Panel panel = new Panel(this); 
+        Panel panel = new Panel(this);
+        
+        UIManager.put("OptionPane.messageFont", new FontUIResource(new Font(  
+                "Arial", Font.LAYOUT_LEFT_TO_RIGHT, 18)));  
+        
         JOptionPane.showMessageDialog(panel,
         		"Welcome to Tetris \n "
         		+ "Instructions for the game\n"
         		+ " You have to eliminate rows of blocks\n"
         		+ " by fitting them in the empty spaces\n"
+        		+ " More blocks eliminated, more points\n"
+        		+ " you will get.\n"
         		+ " Keys : \n"
         		+ " Navigation:\n"
         		+ " 1. Left : LEFT\n"
         		+ " 2. Right: RIGHT\n"
         		+ " Rotation: UP\n"
-        		+ " Drop down :DOWN\n"
+        		+ " Drop down: DOWN\n"
+        		+ " Speed Up Drop: <D> or <d> \n"
         		+ " Pause: Press <P>");
         add(panel);
         panel.start();

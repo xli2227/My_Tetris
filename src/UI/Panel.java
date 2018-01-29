@@ -41,7 +41,6 @@ public class Panel extends JPanel implements ActionListener {
 		nextPiece.setRandomShape();
 		timer = new Timer(400, this);
 		timer.start();
-
 		statusbar = p.getStatusBar();
 		panel = new Tetrominoes[BoardWidth * BoardHeight];
 		addKeyListener(new myAdapter());
