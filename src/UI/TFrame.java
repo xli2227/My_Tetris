@@ -2,9 +2,12 @@ package UI;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,7 +37,7 @@ public class TFrame extends JFrame {
         statusbar.setFont(new Font (Font.DIALOG, Font.BOLD, 28));
         add(statusbar,BorderLayout.SOUTH);
         
-        
+        retry = new JButton("Restart");
         Panel panel = new Panel(this);
         
         UIManager.put("OptionPane.messageFont", new FontUIResource(new Font(  
@@ -56,14 +59,31 @@ public class TFrame extends JFrame {
         		+ " Speed Up Drop: <D> or <d> \n"
         		+ " Pause: Press <P>");
         add(panel);
+        panel.setLayout(null);
+        retry.setBounds(490,400,100,30);
+		retry.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+           /*
+            * Very Important, get the focus back from Jbutton.
+            * Make Sure that the Listener still keep an eye on Key Action. 
+           */           	
+            panel.requestFocus();
+            statusbar.setText("Score: 0");
+            panel.start();
+            }
+        });
+        panel.add(retry);
         panel.start();
 	 }
 	
 	public JLabel getStatusBar() {
 	       return statusbar;
 	   }
-
+	public JButton getRetryButton(){
+		   return retry;
+	}
 	//Variable Declaration.
 	private static final long serialVersionUID = 1L;
-	JLabel statusbar,score;
+	JLabel statusbar;
+	JButton retry;
 }

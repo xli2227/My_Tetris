@@ -9,6 +9,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JPanel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
@@ -33,7 +34,7 @@ public class Panel extends JPanel implements ActionListener {
 	Shape nextPiece;
 	Tetrominoes[] panel;
 	JLabel statusbar;
-
+	JButton retry;
 	public Panel(TFrame p) {
 		setFocusable(true);
 		curPiece = new Shape();
@@ -42,8 +43,19 @@ public class Panel extends JPanel implements ActionListener {
 		timer = new Timer(400, this);
 		timer.start();
 		statusbar = p.getStatusBar();
+		retry = p.getRetryButton();
+		/*
+		retry.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+        		SetEmptyBoard();
+        		newPiece();
+    			statusbar.setText("Score: " + String.valueOf(score));
+
+            }
+        });
+        */
 		panel = new Tetrominoes[BoardWidth * BoardHeight];
-		addKeyListener(new myAdapter());
+		this.addKeyListener(new myAdapter());
 		SetEmptyBoard();
 	}
 
@@ -56,7 +68,6 @@ public class Panel extends JPanel implements ActionListener {
 		isFallingFinished = false;
 		score = 0;
 		SetEmptyBoard();
-
 		newPiece();
 		timer.start();
 	}
@@ -71,12 +82,14 @@ public class Panel extends JPanel implements ActionListener {
 			statusbar.setText("paused");
 		} else {
 			timer.start();
-			statusbar.setText("Score" + String.valueOf(score));
+			statusbar.setText("Score: " + String.valueOf(score));
 		}
 		repaint();
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+
+
 		if (isFallingFinished) {
 			isFallingFinished = false;
 			newPiece();
@@ -92,13 +105,13 @@ public class Panel extends JPanel implements ActionListener {
 		Shape temp = new Shape();
 		temp.setRandomShape();
 		nextPiece = temp;
-		curX = (BoardWidth - 4) / 2 + 1;
+		curX = (BoardWidth - 4) / 2 ;
 		curY = BoardHeight - 1 + curPiece.minY();
 		if (!tryMove(curPiece, curX, curY)) {
 			curPiece.setShape(Tetrominoes.NoShape);
 			timer.stop();
 			isStarted = false;
-			statusbar.setText("Oooops,game over.");
+			statusbar.setText("Oooops, game over.");
 		}
 	}
 
@@ -235,6 +248,8 @@ public class Panel extends JPanel implements ActionListener {
 		{
 			int nextX = BoardWidth - 2;
 			int nextY = BoardHeight - 5 + nextPiece.minY();
+			if(nextPiece.getShape()==Tetrominoes.SquareShape || nextPiece.getShape()==Tetrominoes.SShape || nextPiece.getShape()==Tetrominoes.MirroredLShape)
+				nextX--;
 			for(int i = 0; i < 4; i++)
 			{
 				int x = nextX + nextPiece.getX(i);
